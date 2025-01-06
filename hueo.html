@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pierre-Papier-Ciseaux</title>
+    <style>
+        /* styles.css */
+
+        body {
+            background-color: #f5f5dc; /* Beige background */
+            background-image: radial-gradient(#fff, transparent 50%),
+                              radial-gradient(#fff, transparent 50%);
+            background-size: 100px 100px;
+            background-position: 0 0, 50px 50px;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .game-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 300px;
+        }
+
+        h1 {
+            font-size: 1.8em;
+            color: #333;
+        }
+
+        .choices button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .choices button:hover {
+            background-color: #0056b3;
+        }
+
+        .results {
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+
+        #replay {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        #replay:hover {
+            background-color: #218838;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 400px) {
+            .game-container {
+                width: 90%;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .choices button {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+
+            #replay {
+                font-size: 0.9em;
+                padding: 8px 15px;
+            }
+
+            .results {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Pierre-Papier-Ciseaux</h1>
+        <div class="choices">
+            <button class="choice" data-choice="pierre">Pierre</button>
+            <button class="choice" data-choice="papier">Papier</button>
+            <button class="choice" data-choice="ciseaux">Ciseaux</button>
+        </div>
+        <div class="results">
+            <p id="round-result"></p>
+            <p id="score">Score - Joueur: 0 | Ordinateur: 0</p>
+        </div>
+        <button id="replay" class="hidden">Rejouer</button>
+    </div>
+
+    <script>
+        // script.js
+
+document.addEventListener("DOMContentLoaded", () => {
+    const choices = document.querySelectorAll(".choice");
+    const roundResult = document.getElementById("round-result");
+    const scoreDisplay = document.getElementById("score");
+    const replayButton = document.getElementById("replay");
+
+    let playerScore = 0;
+    let computerScore = 0;
+
+    const choicesArray = ["pierre", "papier", "ciseaux"];
+
+    const getComputerChoice = () => {
+        const randomIndex = Math.floor(Math.random() * choicesArray.length);
+        return choicesArray[randomIndex];
+    };
+
+    const getResult = (player, computer) => {
+        if (player === computer) return "Égalité";
+        if (
+            (player === "pierre" && computer === "ciseaux") ||
+            (player === "papier" && computer === "pierre") ||
+            (player === "ciseaux" && computer === "papier")
+        ) {
+            playerScore++;
+            return "Vous avez gagné !";
+        } else {
+            computerScore++;
+            return "L'ordinateur a gagné !";
+        }
+    };
+
+    const updateScore = () => {
+        scoreDisplay.textContent = `Score - Joueur: ${playerScore} | Ordinateur: ${computerScore}`;
+    };
+
+    const resetGame = () => {
+        playerScore = 0;
+        computerScore = 0;
+        updateScore();
+        roundResult.textContent = "";
+        replayButton.classList.add("hidden");
+    };
+
+    choices.forEach(button => {
+        button.addEventListener("click", () => {
+            const playerChoice = button.getAttribute("data-choice");
+            const computerChoice = getComputerChoice();
+            const result = getResult(playerChoice, computerChoice);
+
+            roundResult.textContent = `Vous avez choisi ${playerChoice}, l'ordinateur a choisi ${computerChoice}. ${result}`;
+            updateScore();
+
+            if (playerScore === 5 || computerScore === 5) {
+                roundResult.textContent += `\n Partie terminée. ${playerScore === 5 ? "Vous êtes le grand gagnant !" : "L'ordinateur a remporté la partie."}`;
+                replayButton.classList.remove("hidden");
+            }
+        });
+    });
+
+    replayButton.addEventListener("click", resetGame);
+});
+    </script>
+</body>
+</html>
